@@ -104,3 +104,6 @@ We can also see below that the company that had the most workers leaving was `Go
 8|Louisa Sanchez|Smith-McKinsey|Google
 9|Clark Henderson|Ann-Sullivan|Google
 10|Clara Mayon|Ann-Sullivan|Google
+
+ <a href="#top">Back to top</a>
+ ---
