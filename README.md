@@ -187,3 +187,6 @@ ORDER BY earnings ASC, c.name ASC;
 2. Then we join the table from step 1 with `cities` table based on `city_id`.
 3. We will group by `cities.id` and `cities.name` and <strong>SUM</strong> fares from the table from step 1.
 4. Make sure to order `earnings` and `cities.name` in ascending order
+
+ <a href="#top">Back to top</a>
+ ---
