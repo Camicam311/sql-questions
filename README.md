@@ -107,3 +107,47 @@ We can also see below that the company that had the most workers leaving was `Go
 
  <a href="#top">Back to top</a>
  ---
+
+### 2. Earnings by country
+Write a query to get the city names and earnings from each city. 'Earnings' are the sum of all the fares from the rides for a given city. Please display the output as the following:
+'CITIES.Name EARNINGS'
+Sort the output according the earnings in ascending order and city names in ascending order.
+
+We are given three different tables below
+#### CITIES:
+|Name|Type|Description|
+---|---|---
+ID|STR|Id of the city
+Name|STR|Name of the city
+
+#### USERS:
+|Name|Type|Description
+---|---|---
+ID|STR|User ID
+city_id|STR|City Id
+name|STR|User Name
+email|STR|User email
+
+#### RIDES:
+|Name|Type|Description
+---|---|---
+id|STR|Ride Id
+user_id|STR|User ID
+distance|INT|Distance traveled
+fare|INT|Fare of the ride
+
+#### Sample Input:CITIES
+|id|Name|
+---|---
+1|Cooktown
+2|South Suzanne
+
+#### Sample Input:USERS
+|id|city_id|name|email
+---|---|---|---
+1|2|Roberto Carlos| rc@gmail.com
+2|2|Tom Hardy|th@gmail.com
+3|1|Jordan Peters|jp@gmail.com
+4|1|Bill Gait|bg@gmail.com
+5|1|Frank Ribery|frdf2@gmail.com
+6|1|Morgan John|mr34@gmail.com
