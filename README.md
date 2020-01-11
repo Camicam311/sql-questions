@@ -139,8 +139,8 @@ fare|INT|Fare of the ride
 #### Sample Input:CITIES
 |id|Name|
 ---|---
-1|Cooktown
-2|South Suzanne
+1|San Francisco
+2|Columbia
 
 #### Sample Input:USERS
 |id|city_id|name|email
@@ -151,3 +151,39 @@ fare|INT|Fare of the ride
 4|1|Bill Gait|bg@gmail.com
 5|1|Frank Ribery|frdf2@gmail.com
 6|1|Morgan John|mr34@gmail.com
+
+#### Sample Input: RIDES
+|id|user_id|distance|fare
+---|---|---|---
+1|1|21|200
+2|3|6|55
+3|2|30|230
+4|1|21|300
+5|2|1234|320
+6|4|4352|1000
+7|5|43652|300
+8|6|343|355
+
+#### Sample Output:
+```sql
+Columbia 1140
+San Francisco 1710
+```
+<br/><br/>
+#### Answer:
+```sql
+SELECT c.name, SUM(ur.fare) earnings
+FROM cities c,
+	(SELECT u.city_id,u.name, r.fare
+	FROM users u, rides r
+	WHERE u.id = r.user_id) ur
+WHERE ur.city_id = c.id
+GROUP BY c.id,c.name
+ORDER BY earnings ASC, c.name ASC;
+```
+
+#### Explanation
+1. First we want to join `Users` and `Rides` tables together by `u.id = r.user_id` to get ride informatino of the users.
+2. Then we join the table from step 1 with `cities` table based on `city_id`.
+3. We will group by `cities.id` and `cities.name` and <strong>SUM</strong> fares from the table from step 1.
+4. Make sure to order `earnings` and `cities.name` in ascending order
