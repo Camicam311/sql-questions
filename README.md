@@ -1,5 +1,52 @@
 # SQL questions
-### 1.Company Query
+----
+### Nth Highest Salary
+Write a SQL query to get the nth highest salary from the `Employee` tabble.
+
+#### Employee table:
+|Id|Salary|
+---|---
+|1|100|
+|2|200|
+|3|300|
+
+For example, given the above table, the nth highest salary where n = 2 is `200`. If there is no highest salary, output `null`.
+
+#### Output table:
+|getHighestSalary(2)|
+|---|
+|200|
+
+#### Answer:
+```sql
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+DECLARE M int;
+SET M = N - 1;
+RETURN (
+	SELECT DISTINCT Salary # we want to get only a single value if there are more than one same value
+	FROM Employee
+	ORDER BY Salary DESC # order by descending order to get the highest 
+	LIMIT M, 1 # same as LIMIT 1 OFFSET M (Show first value after disregarding first M entries)
+);
+END
+```
+#### Explanation:
+- We want to first order the `Salary` column in <strong>descending</strong> order and also not to forget to query only <strong> DISTINCT</strong> values.
+- Intuitively, if we want to get the nth highest salary, this means that we will have to count down from the highest `Salary` to the nth highest salary. 
+- For example, if we want to get the 4th highest salary, we will skip the first entries from the `Salary` column and stop at the 4th entry. 
+- To translate this process into a query, we will make use of `LIMIT A, OFFSET B`. Essentially `LIMIT A, OFFSET B` means that we will skip the first `B` amount of entries and only show the next `A` entries.
+- In our case, we will skip the first <strong>N-1</strong> entries and how only the <strong>N</strong>th entry (i.e. `LIMIT 1, OFFSET N-1 OR LIMIT N-1, 1`
+- So we start by initializing the variable `M` as `SET M = N-1;` to set the number of entries to skip until the `N`th highest salary.
+
+Steps in summary:
+1. Initialize `SET M = N - 1;`
+2. Query `Salary` in <strong>descending</strong> order, not forgetting to display only <strong>distinct</strong> values.
+3. Skip the first `N-1` entries and show the `N`th entry, i.e. `LIMIT M,1`
+
+<a href="#top">Back to top</a>
+----
+### Company Query
 Given two tables, query out names of people and the names of their previous employers. Limit the list to the people currently working with the companies which were left by the most number of people. Print the name of the employee and the previous employer.
 
 #### People table:
@@ -105,10 +152,10 @@ We can also see below that the company that had the most workers leaving was `Go
 9|Clark Henderson|Ann-Sullivan|Google
 10|Clara Mayon|Ann-Sullivan|Google
 
- <a href="#top">Back to top</a>
- ---
+<a href="#top">Back to top</a>
 
-### 2. Earnings by country
+----
+### Earnings by country
 Write a query to get the city names and earnings from each city. 'Earnings' are the sum of all the fares from the rides for a given city. Please display the output as the following:
 'CITIES.Name EARNINGS'
 Sort the output according the earnings in ascending order and city names in ascending order.
