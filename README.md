@@ -1,6 +1,48 @@
 # SQL questions
+---
+## Rank Scores
+Write a SQL query to rank scores. If there is a tie between two scores, both should have the same ranking. Note that after a tie, the next ranking number should be the next consecutive integer value. In other words, there should be no "holes" between ranks.
+
+#### Scores table:
+|Id|Score|
+---|---
+| 1  | 3.50  |
+| 2  | 3.65  |
+| 3  | 4.00  |
+| 4  | 3.85  |
+| 5  | 4.00  |
+| 6  | 3.65  |
+
+#### Output:
+For example, given the above Scores table, your query should generate the following report (order by highest score):
+
+|Score|Rank|
+---|---
+|4.00   | 1    |
+| 4.00  | 1    |
+| 3.85  | 2    |
+| 3.65  | 3    |
+| 3.65  | 3    |
+| 3.50  | 4    |
+
+#### Answers:
+```SQL
+SELECT
+  Score,
+  (SELECT COUNT(DISTINCT Score) FROM Scores WHERE Score >= s.Score) Rank
+FROM Scores s
+ORDER BY Score DESC
+```
+#### Explanation
+- We want to create a column called `Rank` that ranks the scores in decreasing order.
+- We can do this by first selecting the `Salary` column with only <strong>DISTINCT</strong> entries.
+- To turn this into the `Rank` column that we want, we <strong>COUNT</strong> the number of distinct Scores.
+- Now our next issue is to deal with repeated entries from `Score` column, i.e. what if you have more than two scores?
+- We can deal with issue by adding `WHERE Score >= s.Score`.
+
+<a href="#top">Back to top</a>
 ----
-### Nth Highest Salary
+## Nth Highest Salary
 Write a SQL query to get the nth highest salary from the `Employee` tabble.
 
 #### Employee table:
@@ -26,15 +68,15 @@ SET M = N - 1;
 RETURN (
 	SELECT DISTINCT Salary # we want to get only a single value if there are more than one same value
 	FROM Employee
-	ORDER BY Salary DESC # order by descending order to get the highest 
+	ORDER BY Salary DESC # order by descending order to get the highest
 	LIMIT M, 1 # same as LIMIT 1 OFFSET M (Show first value after disregarding first M entries)
 );
 END
 ```
 #### Explanation:
 - We want to first order the `Salary` column in <strong>descending</strong> order and also not to forget to query only <strong> DISTINCT</strong> values.
-- Intuitively, if we want to get the nth highest salary, this means that we will have to count down from the highest `Salary` to the nth highest salary. 
-- For example, if we want to get the 4th highest salary, we will skip the first entries from the `Salary` column and stop at the 4th entry. 
+- Intuitively, if we want to get the nth highest salary, this means that we will have to count down from the highest `Salary` to the nth highest salary.
+- For example, if we want to get the 4th highest salary, we will skip the first entries from the `Salary` column and stop at the 4th entry.
 - To translate this process into a query, we will make use of `LIMIT A, OFFSET B`. Essentially `LIMIT A, OFFSET B` means that we will skip the first `B` amount of entries and only show the next `A` entries.
 - In our case, we will skip the first <strong>N-1</strong> entries and how only the <strong>N</strong>th entry (i.e. `LIMIT 1, OFFSET N-1 OR LIMIT N-1, 1`
 - So we start by initializing the variable `M` as `SET M = N-1;` to set the number of entries to skip until the `N`th highest salary.
@@ -46,7 +88,7 @@ Steps in summary:
 
 <a href="#top">Back to top</a>
 ----
-### Company Query
+## Company Query
 Given two tables, query out names of people and the names of their previous employers. Limit the list to the people currently working with the companies which were left by the most number of people. Print the name of the employee and the previous employer.
 
 #### People table:
@@ -155,7 +197,7 @@ We can also see below that the company that had the most workers leaving was `Go
 <a href="#top">Back to top</a>
 
 ----
-### Earnings by country
+## Earnings by country
 Write a query to get the city names and earnings from each city. 'Earnings' are the sum of all the fares from the rides for a given city. Please display the output as the following:
 'CITIES.Name EARNINGS'
 Sort the output according the earnings in ascending order and city names in ascending order.
