@@ -25,25 +25,57 @@ For example, given the above Scores table, your query should generate the follow
 | 3.65  | 3    |
 | 3.50  | 4    |
 
-#### Answers:
+#### Answer 1:
 ```SQL
 SELECT
   Score,
+-- We first count the number of distinct scores that are greater than
+-- or equal to itself
   (SELECT COUNT(DISTINCT Score) FROM Scores WHERE Score >= s.Score) Rank
 FROM Scores s
+-- Make sure to order scores in decreasing order
 ORDER BY Score DESC
 ```
 #### Explanation
 - We want to create a column called `Rank` that ranks the scores in decreasing order.
-- We can do this by first selecting the `Salary` column with only <strong>DISTINCT</strong> entries.
+- We can do this by first selecting the `Score` column with only <strong>DISTINCT</strong> entries.
 - To turn this into the `Rank` column that we want, we <strong>COUNT</strong> the number of distinct Scores.
 - Now our next issue is to deal with repeated entries from `Score` column, i.e. what if you have more than two scores?
-- We can deal with issue by adding `WHERE Score >= s.Score`.
+- We can deal with this issue by adding `WHERE Score >= s.Score`.
+
+#### Answer 2:
+```SQL
+SELECT
+  Score,
+  @x := @x + (@y <> (@y := Score)) Rank
+FROM
+  Scores,
+  (SELECT @x := 0, @y := -1) init
+ORDER BY Score DESC
+```
+#### Explanation
+- We want to create a column called `Rank` that indicates the rank of a score.
+
+```SQL
+ORDER BY Score DESC
+```
+- We will make a table that includes two variables that start from `0` and `-1` accordingly. Let the variables be `x`,`y` accordingly.
+
+```SQL
+SELECT @x := 0, @y := -1)
+```
+- Then we will order `Scores` table in <strong>DECREASING</strong> order by score to start counting the ranks.
+- As we move down the `score` column, we will add `1` to `x` and add `0` if the scores are the same.
+
+```SQL
+-- rank = rank + (0 if prev == Score else 1) // set prev = Score at the same time
+@x := @x + (@y <> (@y := Score))
+```
 
 <a href="#top">Back to top</a>
 ----
 ## Nth Highest Salary
-Write a SQL query to get the nth highest salary from the `Employee` tabble.
+Write a SQL query to get the nth highest salary from the `Employee` table.
 
 #### Employee table:
 |Id|Salary|
