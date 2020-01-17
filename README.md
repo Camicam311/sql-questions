@@ -1,5 +1,89 @@
 # SQL questions
 ---
+## Consecutive Numbers
+Write a SQL query to find all numbers that appear at least three times consecutively.
+
+#### Logs table:
+|Id|Num|
+--|--
+1|1
+2|1
+3|1
+4|2
+5|1
+6|2
+7|2
+
+#### Sample output:
+For example, given the above Logs table, 1 is the only number that appears consecutively for at least three times.
+
+|ConsecutiveNums|
+---
+1
+
+#### Answer:
+```SQL
+SELECT l1.Num as ConsecutiveNums
+FROM logs l1
+LEFT JOIN logs l2 on l1.Id = l2.Id -1
+LEFT JOIN logs l3 on l1.Id = l3.Id -2
+WHERE l1.Num = l2.Num
+AND l1.Num = l3.Num
+```
+#### Explanation:
+1. We want to align two tables along side the `Logs` table such that the second table next to `Logs` table will start from the second row of the `Logs` table. The following is an example:
+
+|Id|Num|Id|Num
+--|--|--|--
+1|1|2|1
+2|1|3|1
+...|...|...|...|
+7|2|null|null
+
+```SQL
+LEFT JOIN logs l2 on l1.Id = l2.Id -1
+```
+
+
+2. Similarly, the third table will look like the following:
+
+|Id|Num|Id|Num|Id|Num
+--|--|--|--|--|--
+1|1|2|1|3|1
+2|1|3|1|4|2
+...|...|...|...|...|...|
+7|2|null|null|null|null
+
+```SQL
+LEFT JOIN logs l3 on l1.Id = l3.Id -2
+```
+
+3. After we have the three tables lined up, we filter by conditioning by the following:
+
+```SQL
+WHERE l1.Num = l2.Num
+AND l1.Num = l3.Num
+```
+
+---
+## Active users retention
+Assume you have the below tables on user actions. Write a query to get the active user retention by month.
+
+#### user_actions table:
+|column name|type|
+--|--
+user_id|integer
+event_id|string
+timestamp|datetime
+
+```SQL
+-- DATETIME - format: YYYY-MM-DD HH:MI:SS
+SELECT EXTRACT(MONTH FROM timestamp) as month, SUM(DISTINCT user_id)
+FROM user_actions
+GROUP BY month
+```
+
+---
 ## Rank Scores
 Write a SQL query to rank scores. If there is a tie between two scores, both should have the same ranking. Note that after a tie, the next ranking number should be the next consecutive integer value. In other words, there should be no "holes" between ranks.
 
@@ -98,10 +182,10 @@ BEGIN
 DECLARE M int;
 SET M = N - 1;
 RETURN (
-	SELECT DISTINCT Salary # we want to get only a single value if there are more than one same value
+	SELECT DISTINCT Salary -- we want to get only a single value if there are more than one same value
 	FROM Employee
-	ORDER BY Salary DESC # order by descending order to get the highest
-	LIMIT M, 1 # same as LIMIT 1 OFFSET M (Show first value after disregarding first M entries)
+	ORDER BY Salary DESC -- order by descending order to get the highest
+	LIMIT M, 1 -- same as LIMIT 1 OFFSET M (Show first value after disregarding first M entries)
 );
 END
 ```
