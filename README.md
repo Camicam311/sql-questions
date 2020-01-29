@@ -1,5 +1,130 @@
 # SQL questions
 ---
+## Exchange Seats
+Mary is a teacher in a middle school and she has a table seat storing students' names and their corresponding seat ids.
+
+The column id is continuous increment.
+
+
+Mary wants to change seats for the adjacent students.
+
+
+Write a SQL query to output the result for Mary.
+
+**Note**: If the number of students is odd, there is no need to change the last one's seat.
+
+### `Seat` table
+|Id|student|
+--|--
+1|Abbot
+2|Doris
+3|Emerson
+4|Green
+5|James
+
+### Output:
+|Id|Student|
+--|--
+1|Doris
+2|Abbot
+3|Green
+4|Emerson
+5|James
+
+### Answer
+```sql
+SELECT
+  (CASE
+      -- considering when count is odd
+      WHEN mod(id,2) != 0 AND id != counts THEN id + 1
+      WHEN mod(id,2) != 0 AND id = counts THEN id
+      -- considering when count is even
+      ELSE id - 1
+    END) AS id,
+  student
+FROM seat, (SELECT COUNT(*) AS counts FROM seat) AS seat_counts
+ORDER BY id ASC
+;
+```
+### Explanation
+1. First we want to count number of students to see whether the count is odd or even.
+```sql
+(SELECT COUNT(*) AS counts FROM seat) AS seat_counts
+```
+2. Then we want to divide into different cases:
+```sql
+(CASE
+      -- case when id is odd and total number is not equal
+      WHEN mod(id,2) != 0 AND id != counts THEN id + 1
+      -- case when id is odd and total number is equal
+      WHEN mod(id,2) != 0 AND id = counts THEN id
+      -- case when id is even
+      ELSE id - 1
+END)
+```
+
+<a href="#top">Back to top</a>
+
+---
+## Department Highest Salary
+The `Employee` table holds all employees. Every employee has an id, salary and there is also a column for the department id.
+
+#### `Employee` table:
+|Id|Name|Salary|DepartmentId|
+--|--|--|--
+1|Joe|70000|1
+2|Jim|90000|1
+3|Henry|80000|2
+4|Sam|60000|2
+5|Max|90000|1
+
+#### `Department` table holds all departments of the company:
+|Id|Name|
+--|--
+1|IT
+2|Sales
+
+Write a SQL query to find employees who have the highest salary in each of the departments. For the above tables, your SQL query should return the following rows (order of rows does not matter).
+
+#### Sample output:
+|Department|Employee|Salary|
+--|--|--
+IT|Max|90000
+IT|Jim|90000
+Sales|Henry|80000
+
+Max and Jim both have the highest salary in the IT department and Henry has the highest salary in the Sales department.
+
+#### Answer:
+```sql
+SELECT d.Name Department, e.Name Employee e.Salary Salary
+FROM Employee e
+INNER JOIN Department d on e.DepartmentId = d.Id
+WHERE (e.DepartmentId, e.Salary)
+IN
+  (SELECT DepartmentId, MAX(Salary)
+  FROM Employee
+  GROUP BY DepartmentId)
+;
+```
+#### Explanation:
+1. Note we want to first create a table that lists out the maximum salaries for each of the department.
+```sql
+(SELECT DepartmentId, MAX(Salary)
+FROM Employee
+GROUP BY DepartmentId)
+```
+2. Afterwards, we make a query that outputs all employees that are in the table that we created in *step 1*.
+```SQL
+WHERE (e.DepartmentId, e.Salary) IN
+  (SELECT DepartmentId, MAX(Salary)
+  FROM Employee
+  GROUP BY DepartmentId)
+```
+
+<a href="#top">Back to top</a>
+
+---
 ## Consecutive Numbers
 Write a SQL query to find all numbers that appear at least three times consecutively.
 
@@ -19,7 +144,7 @@ For example, given the above Logs table, 1 is the only number that appears conse
 
 |ConsecutiveNums|
 ---
-1
+|1|
 
 #### Answer:
 ```SQL
@@ -65,6 +190,8 @@ WHERE l1.Num = l2.Num
 AND l1.Num = l3.Num
 ```
 
+<a href="#top">Back to top</a>
+
 ---
 ## Active users retention
 Assume you have the below tables on user actions. Write a query to get the active user retention by month.
@@ -82,6 +209,7 @@ SELECT EXTRACT(MONTH FROM timestamp) as month, SUM(DISTINCT user_id)
 FROM user_actions
 GROUP BY month
 ```
+<a href="#top">Back to top</a>
 
 ---
 ## Rank Scores
@@ -157,6 +285,7 @@ SELECT @x := 0, @y := -1)
 ```
 
 <a href="#top">Back to top</a>
+
 ----
 ## Nth Highest Salary
 Write a SQL query to get the nth highest salary from the `Employee` table.
@@ -203,6 +332,7 @@ Steps in summary:
 3. Skip the first `N-1` entries and show the `N`th entry, i.e. `LIMIT M,1`
 
 <a href="#top">Back to top</a>
+
 ----
 ## Company Query
 Given two tables, query out names of people and the names of their previous employers. Limit the list to the people currently working with the companies which were left by the most number of people. Print the name of the employee and the previous employer.
@@ -393,5 +523,7 @@ ORDER BY earnings ASC, c.name ASC;
 3. We will group by `cities.id` and `cities.name` and <strong>SUM</strong> fares from the table from step 1.
 4. Make sure to order `earnings` and `cities.name` in ascending order
 
+
  <a href="#top">Back to top</a>
+
  ---
