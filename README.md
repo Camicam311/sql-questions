@@ -1,4 +1,70 @@
 # SQL questions
+
+## Department Top 3 Salaries
+The `Employee` table holds all employees. Every employee has an Id, and there is also a column for the department Id.
+
+### `Employee` table
+
+| Id | Name  | Salary | DepartmentId |
+--   |--     |--      |--
+| 1  | Joe   | 85000  | 1            |
+| 2  | Henry | 80000  | 2            |
+| 3  | Sam   | 60000  | 2            |
+| 4  | Max   | 90000  | 1            |
+| 5  | Janet | 69000  | 1            |
+| 6  | Randy | 85000  | 1            |
+| 7  | Will  | 70000  | 1            |
+
+### `Department` table
+The Department table holds all departments of the company.
+
+| Id | Name     |
+--|--
+| 1  | IT       |
+| 2  | Sales    |
+
+Write a SQL query to find employees who earn the top three salaries in each of the department. For the above tables, your SQL query should return the following rows (order of rows does not matter).
+
+### Sample output:
+
+| Department | Employee | Salary |
+--|--|--
+| IT         | Max      | 90000  |
+| IT         | Randy    | 85000  |
+| IT         | Joe      | 85000  |
+| IT         | Will     | 70000  |
+| Sales      | Henry    | 80000  |
+| Sales      | Sam      | 60000  |
+
+In the IT department, Max earns the highest salary, both Randy and Joe earn the second highest salary, and Will earns the third highest salary. There are only two employees in the Sales department, Henry earns the highest salary while Sam earns the second highest salary.
+
+### Answer:
+```sql
+SELECT d.Name Department, e1.Name Employee, e1.Salary
+FROM Employee e1
+INNER JOIN Department d on d.Id = e1.DepartmentId
+WHERE
+-- Number of Salaries greater than itself is less than 3
+3 > (SELCT COUNT(DISTINCT e2.Salary)
+     FROM Employee e2
+     WHERE e2.Salary > e1.Salary
+     AND e2.DepartmentId = e1.DepartmentId)
+```
+
+### Explanation:
+It is important to note that another way of choosing top 3 salaries is choosing salaries that have less than 3 salaries that are greater than itself. This is executed by the following:
+```sql
+SELECT e1.Name Employee, e1.Salary
+FROM Employee e1
+WHERE
+3 >
+  (SELECT COUNT(DISTINCT e2.Salary)
+  FROM Employee e2
+  WHERE e2.Salary > e1.salary)
+```
+
+<a href="#top">Back to top</a>
+
 ---
 ## Exchange Seats
 Mary is a teacher in a middle school and she has a table seat storing students' names and their corresponding seat ids.
